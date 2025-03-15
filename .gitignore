@@ -1,0 +1,6 @@
+prod.keys
+*.nsp
+*.xml
+*.nca
+extracted
+*_string.go
