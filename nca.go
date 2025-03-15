@@ -53,7 +53,14 @@ func (nca *NCA) readHeader(keys *Keys) error {
 
 	encHeader := make([]byte, 0xC00)
 	binary.Read(nca.data, binary.LittleEndian, &encHeader)
-	header, err := aesxts.Decrypt(keys.HeaderKey[:], encHeader, 0xC00, 0x200)
+	aesCtx, err := aesxts.NewAESCtx(keys.HeaderKey[:])
+	if err != nil {
+		return err
+	}
+	defer aesxts.FreeAESCtx(aesCtx)
+
+	header := make([]byte, 0xC00)
+	err = aesxts.AESXTSDecrypt(aesCtx, header, encHeader, 0xC00, 0, 0x200)
 	if err != nil {
 		return err
 	}
